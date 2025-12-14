@@ -1,0 +1,214 @@
+/* =========================================
+   1. 基础设置 & Reset
+   ========================================= */
+:root {
+    /* 核心变量 */
+    --font-stack: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --text-color: #0f172a;
+    --text-muted: #35415f;
+    
+    /* 玻璃拟态与背景 */
+    --accent-blue: #5a7bff;
+    --accent-purple: #7d5bff;
+    --accent-green: #3ed69f;
+    
+    --bg-gradient: 
+        radial-gradient(circle at 15% 20%, rgba(90,123,255,0.24), transparent 32%),
+        radial-gradient(circle at 85% 15%, rgba(125,91,255,0.26), transparent 40%),
+        radial-gradient(circle at 30% 78%, rgba(62,214,159,0.22), transparent 36%),
+        linear-gradient(180deg, #f2f6ff 0%, #e8eeff 50%, #f4f7ff 100%);
+        
+    --card-bg: linear-gradient(145deg, rgba(255,255,255,0.4), rgba(255,255,255,0.2));
+    --card-border: rgba(255,255,255,0.6);
+    --card-shadow: 0 20px 60px rgba(59,87,161,0.15), 0 0 0 1px rgba(255,255,255,0.5);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body, h1, p { margin: 0; padding: 0; }
+
+body {
+    font-family: var(--font-stack);
+    background: var(--bg-gradient);
+    background-attachment: fixed; /* 修复移动端背景滚动问题 */
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* =========================================
+   2. 背景动画 Blobs
+   ========================================= */
+body::before, body::after {
+    content: "";
+    position: fixed;
+    width: 35rem;
+    height: 35rem;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.6;
+    z-index: -1;
+    pointer-events: none;
+}
+body::before {
+    top: -10rem; left: -8rem;
+    background: radial-gradient(circle, #5a7bff 0%, transparent 70%);
+    animation: floatBlob 16s ease-in-out infinite;
+}
+body::after {
+    bottom: -10rem; right: -8rem;
+    background: radial-gradient(circle, #3ed69f 0%, transparent 70%);
+    animation: floatBlob 18s ease-in-out infinite reverse;
+}
+
+@keyframes floatBlob {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(15px, -20px) scale(1.05); }
+}
+
+/* =========================================
+   3. 主容器与卡片
+   ========================================= */
+.container {
+    width: 100%;
+    max-width: 40rem; /* 约640px */
+    padding: 3rem 1.5rem 1rem;
+    flex: 1;
+}
+
+.card {
+    padding: 3rem 2rem;
+    border-radius: 2rem;
+    background: var(--card-bg);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    box-shadow: var(--card-shadow);
+    text-align: center;
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.avatar {
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 1.5rem;
+    border: 4px solid rgba(255,255,255,0.8);
+    box-shadow: 0 10px 25px rgba(90,123,255,0.2);
+}
+
+h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+    color: #0b1c3f;
+    letter-spacing: -0.02em;
+}
+
+/* =========================================
+   4. 按钮样式
+   ========================================= */
+.button-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 1rem;
+    min-height: 3.5rem;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 1rem;
+    border: 1px solid rgba(255,255,255,0.3);
+    
+    /* 默认渐变，具体颜色由下方修饰类定义 */
+    background: linear-gradient(120deg, var(--btn-color-1), var(--btn-color-2));
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2);
+    transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+}
+
+.button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+    filter: brightness(1.05);
+}
+
+.button:active {
+    transform: scale(0.98);
+}
+
+.icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 0.75rem;
+    object-fit: contain;
+}
+
+/* 品牌特定颜色定义 */
+.button-blog     { --btn-color-1: #5a7bff; --btn-color-2: #7d5bff; }
+.button-xhs      { --btn-color-1: #ff2442; --btn-color-2: #ff5c7c; }
+/* B站粉色 */
+.button-bilibili { --btn-color-1: #FB7299; --btn-color-2: #ff8fb0; } 
+/* 微信绿色 */
+.button-wx       { --btn-color-1: #07c160; --btn-color-2: #28d07e; }
+
+/* =========================================
+   5. 页脚样式
+   ========================================= */
+.site-footer {
+    width: 100%;
+    padding: 2rem 1rem 3rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.stats {
+    display: inline-flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255,255,255,0.2);
+    border-radius: 1rem;
+    border: 1px solid rgba(255,255,255,0.3);
+    margin-bottom: 1.5rem;
+}
+
+.stats strong { color: var(--accent-blue); }
+
+.links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.links a {
+    color: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: opacity 0.2s;
+}
+
+.links a:hover { opacity: 0.7; }
+
+.links img { height: 20px; width: auto; }
