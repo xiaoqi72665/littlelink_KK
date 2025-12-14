@@ -4,71 +4,84 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <title>KK还要玩</title>
-    <meta name="description" content="KK还要玩 | 视觉设计师、程序员、游戏博主，分享游戏攻略、数码评测与设计灵感">
-    <meta name="keywords" content="KK还要玩, 游戏博主, 数码评测, 视觉设计, 程序员, 游戏攻略">
-    <meta name="author" content="KK还要玩">
-    <link rel="canonical" href="https://jisuk.top">
-    
+    <title>不鹤 | NETRUNNER</title>
+    <meta name="description" content="不鹤 | 赛博朋克风格主页">
     <link rel="icon" type="image/x-icon" href="images/avatar.png">
-    <link rel="preload" as="image" href="images/avatar.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="background-blobs"></div>
+    <div class="cyber-grid"></div>
+    <div class="scanlines"></div>
 
     <main class="container">
-        <div class="card glass-effect">
-            <img class="avatar" src="images/avatar.png" srcset="images/avatar@2x.png 2x" alt="KK还要玩头像">
+        <div class="cyber-card">
+            <div class="card-decoration-top">SYSTEM_BREACH // DETECTED</div>
             
-            <h1>KK还要玩</h1>
+            <div class="avatar-container">
+                 <img class="avatar" src="images/avatar.png" alt="不鹤头像">
+            </div>
+            
+            <h1 class="cyber-glitch" data-text="不鹤">不鹤</h1>
+            <p class="cyber-subtitle">视觉设计师 / 程序猿 / 游戏玩家</p>
             
             <div class="button-stack">
-                <a class="button button-blog" href="https://sims4.jisuk.top/" target="_blank" rel="noopener">
+                <a class="cyber-button button-blog" href="https://sims4.jisuk.top/" target="_blank" rel="noopener">
+                    <span class="btn-glitch-layer"></span>
                     <img class="icon" src="images/icons/button-blog.png" alt="" aria-hidden="true">
-                    <span>Sims4模组汉化站</span>
+                    <span class="btn-text">Sims4模组汉化站</span>
                 </a>
 
-                <a class="button button-xhs" href="https://www.xiaohongshu.com/user/profile/62c356c600000000150179c3" target="_blank" rel="noopener">
+                <a class="cyber-button button-xhs" href="https://www.xiaohongshu.com/user/profile/62c356c600000000150179c3" target="_blank" rel="noopener">
+                     <span class="btn-glitch-layer"></span>
                     <img class="icon" src="images/icons/小红书.svg" alt="" aria-hidden="true">
-                    <span>小红书</span>
+                    <span class="btn-text">小红书 // RED_NET</span>
                 </a>
 
-                <a class="button button-bilibili" href="https://space.bilibili.com/99592906" target="_blank" rel="noopener">
+                <a class="cyber-button button-bilibili" href="https://space.bilibili.com/99592906" target="_blank" rel="noopener">
+                     <span class="btn-glitch-layer"></span>
                     <img class="icon" src="images/icons/button-bilibili.svg" alt="" aria-hidden="true">
-                    <span>Bilibili</span>
+                    <span class="btn-text">Bilibili // BRAINDANCE</span>
                 </a>
 
-                <a class="button button-wx" href="https://kkdrive.jisuk.top/f/9lsb/wx.jpg" target="_blank" rel="noopener">
+                <a class="cyber-button button-wx" href="https://kkdrive.jisuk.top/f/9lsb/wx.jpg" target="_blank" rel="noopener">
+                     <span class="btn-glitch-layer"></span>
                     <img class="icon" src="images/icons/微信.svg" alt="" aria-hidden="true">
-                    <span>微信</span>
+                    <span class="btn-text">微信 // LINK_DATA</span>
                 </a>
             </div>
+             <div class="card-decoration-bottom">STATUS: ONLINE_</div>
         </div>
     </main>
 
     <footer class="site-footer">
-        <div class="stats glass-effect-sm">
+        <div class="cyber-stats">
             <div class="stat-item">
-                访客 <strong id="busuanzi_value_site_uv">...</strong> 人
+                <span class="stat-label">[VISITORS]</span> <span id="busuanzi_value_site_uv" class="stat-num">...</span>
             </div>
+            <span class="separator">|</span>
             <div class="stat-item">
-                访问 <strong id="busuanzi_value_site_pv">...</strong> 次
+                <span class="stat-label">[HITS]</span> <span id="busuanzi_value_site_pv" class="stat-num">...</span>
             </div>
         </div>
         
-        <div class="links">
-            <a class="beian" href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">
-                <img src="images/备案.svg" alt="ICP备案图标"> 备案号
+        <div class="cyber-links">
+            <a class="beian" href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank" rel="noopener" aria-label="ICP备案">
+                <img src="images/备案.svg" alt="ICP备案">
+                <span>ICP备案号</span>
             </a>
+            
             <div class="provider">
-                <span>本站由</span>
-                <a href="https://www.upyun.com/" target="_blank" rel="noopener" aria-label="又拍云">
+                <span>本网站由</span>
+                <a href="https://www.upyun.com/?utm_source=lianmeng&utm_medium=referral" target="_blank" rel="noopener" aria-label="又拍云">
                     <img src="images/icons/又拍云_logo5.png" alt="又拍云">
                 </a>
-                <span>提供加速服务</span>
+                <span>提供 CDN 加速与云存储服务</span>
             </div>
         </div>
     </footer>

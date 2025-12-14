@@ -1,9 +1,19 @@
 /*
- * 统计脚本 (Busuanzi)
- * 已从 HTML 中分离，保持页面整洁
+ * Cyberpunk 2077 Theme Script
+ * Encapsulated Busuanzi Statistics
  */
+
 (function() {
-    // 核心 Busuanzi 逻辑
+    // --- 控制台彩蛋 (Cyberpunk Style) ---
+    console.log(
+        "%c SYSTEM_BOOT // KK_NETRUNNER_LINK %c V.2.0.77 ",
+        "background:#fcee0a; color:#050505; font-weight:bold; font-family:monospace; padding:4px 8px; border: 2px solid #fcee0a;",
+        "background:#050505; color:#00f0ff; font-family:monospace; padding:4px 8px; border: 2px solid #00f0ff; border-left:none;"
+    );
+    console.log("%c> CONNECTING TO NIGHT CITY NETWORK...", "color:#39ff14; font-family:monospace;");
+
+
+    // --- 不蒜子统计核心代码 ---
     var bszCaller, bszTag;
     !function() {
         var c, d, e, a = !1, b = [];
@@ -66,10 +76,3 @@
         }
     };
 })();
-
-// 控制台彩蛋
-console.log(
-    "%c KK还要玩 %c https://jisuk.top ",
-    "background:#5a7bff; color:#ffffff; font-weight:bold; padding:4px 8px; border-radius:4px 0 0 4px;",
-    "background:#35415f; color:#ffffff; padding:4px 8px; border-radius:0 4px 4px 0;"
-);

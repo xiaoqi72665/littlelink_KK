@@ -1,72 +1,66 @@
 /* =========================================
-   1. 基础设置 & Reset
+   1. CYBERPUNK 核心设定 (Variables & Reset)
    ========================================= */
 :root {
-    /* 核心变量 */
-    --font-stack: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    --text-color: #0f172a;
-    --text-muted: #35415f;
+    /* 2077 配色方案 */
+    --cyber-yellow: #fcee0a; /* 标志性电光黄 */
+    --cyber-blue: #00f0ff;   /* 霓虹青 */
+    --cyber-pink: #ff003c;   /* 故障红/粉 */
+    --cyber-black: #050505;  /* 深黑背景 */
+    --cyber-dark: #121212;   /* 卡片背景 */
+    --cyber-text: #e0e0e0;
     
-    /* 玻璃拟态与背景 */
-    --accent-blue: #5a7bff;
-    --accent-purple: #7d5bff;
-    --accent-green: #3ed69f;
-    
-    --bg-gradient: 
-        radial-gradient(circle at 15% 20%, rgba(90,123,255,0.24), transparent 32%),
-        radial-gradient(circle at 85% 15%, rgba(125,91,255,0.26), transparent 40%),
-        radial-gradient(circle at 30% 78%, rgba(62,214,159,0.22), transparent 36%),
-        linear-gradient(180deg, #f2f6ff 0%, #e8eeff 50%, #f4f7ff 100%);
-        
-    --card-bg: linear-gradient(145deg, rgba(255,255,255,0.4), rgba(255,255,255,0.2));
-    --card-border: rgba(255,255,255,0.6);
-    --card-shadow: 0 20px 60px rgba(59,87,161,0.15), 0 0 0 1px rgba(255,255,255,0.5);
+    /* 字体堆栈 */
+    --font-title: 'Rajdhani', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 body, h1, p { margin: 0; padding: 0; }
 
 body {
-    font-family: var(--font-stack);
-    background: var(--bg-gradient);
-    background-attachment: fixed; /* 修复移动端背景滚动问题 */
-    color: var(--text-color);
+    font-family: var(--font-mono);
+    background-color: var(--cyber-black);
+    /* 背景网格 */
+    background-image: 
+        linear-gradient(transparent 95%, rgba(0, 240, 255, 0.1) 50%),
+        linear-gradient(90deg, transparent 95%, rgba(0, 240, 255, 0.1) 50%);
+    background-size: 30px 30px;
+    color: var(--cyber-text);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     overflow-x: hidden;
+    position: relative;
     line-height: 1.6;
 }
 
 /* =========================================
-   2. 背景动画 Blobs
+   2. 环境特效 (Atmosphere)
    ========================================= */
-body::before, body::after {
-    content: "";
+.scanlines {
     position: fixed;
-    width: 35rem;
-    height: 35rem;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.6;
-    z-index: -1;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(
+        to bottom,
+        transparent 50%,
+        rgba(0, 0, 0, 0.5) 51%
+    );
+    background-size: 100% 4px;
+    z-index: 10;
     pointer-events: none;
-}
-body::before {
-    top: -10rem; left: -8rem;
-    background: radial-gradient(circle, #5a7bff 0%, transparent 70%);
-    animation: floatBlob 16s ease-in-out infinite;
-}
-body::after {
-    bottom: -10rem; right: -8rem;
-    background: radial-gradient(circle, #3ed69f 0%, transparent 70%);
-    animation: floatBlob 18s ease-in-out infinite reverse;
+    opacity: 0.6;
 }
 
-@keyframes floatBlob {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(15px, -20px) scale(1.05); }
+body::after {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
+    z-index: 9;
+    pointer-events: none;
 }
 
 /* =========================================
@@ -74,141 +68,234 @@ body::after {
    ========================================= */
 .container {
     width: 100%;
-    max-width: 40rem; /* 约640px */
-    padding: 3rem 1.5rem 1rem;
-    flex: 1;
+    max-width: 480px;
+    padding: 2rem 1rem;
+    z-index: 20;
+    position: relative;
 }
 
-.card {
+.cyber-card {
+    background: var(--cyber-dark);
+    border: 2px solid var(--cyber-yellow);
+    clip-path: polygon(
+        0 0, 100% 0, 
+        100% calc(100% - 20px), 
+        calc(100% - 20px) 100%, 
+        0 100%
+    );
     padding: 3rem 2rem;
-    border-radius: 2rem;
-    background: var(--card-bg);
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    box-shadow: var(--card-shadow);
     text-align: center;
-    animation: fadeIn 0.8s ease-out;
+    position: relative;
+    box-shadow: 0 0 15px rgba(252, 238, 10, 0.2);
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+.card-decoration-top, .card-decoration-bottom {
+    position: absolute;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--cyber-yellow);
+    opacity: 0.7;
+    letter-spacing: 1px;
+}
+.card-decoration-top { top: 5px; left: 10px; }
+.card-decoration-bottom { bottom: 5px; right: 25px; }
+
+/* =========================================
+   4. 头像与文字
+   ========================================= */
+.avatar-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1.5rem;
 }
 
 .avatar {
-    width: 8rem;
-    height: 8rem;
-    border-radius: 50%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    margin: 0 auto 1.5rem;
-    border: 4px solid rgba(255,255,255,0.8);
-    box-shadow: 0 10px 25px rgba(90,123,255,0.2);
+    border: 2px solid var(--cyber-blue);
+    filter: contrast(1.2) brightness(1.1) sepia(0.2);
+    box-shadow: 0 0 10px var(--cyber-blue);
 }
 
-h1 {
-    font-size: 1.8rem;
-    font-weight: 800;
+h1.cyber-glitch {
+    font-family: var(--font-title);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--cyber-yellow);
+    text-transform: uppercase;
+    position: relative;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px var(--cyber-pink), -2px -2px var(--cyber-blue);
+    animation: glitch-skew 1s infinite linear alternate-reverse;
+}
+h1.cyber-glitch::before, h1.cyber-glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+}
+h1.cyber-glitch::before {
+    left: 2px;
+    text-shadow: -2px 0 var(--cyber-pink);
+    clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim 5s infinite linear alternate-reverse;
+}
+h1.cyber-glitch::after {
+    left: -2px;
+    text-shadow: -2px 0 var(--cyber-blue);
+    clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim2 5s infinite linear alternate-reverse;
+}
+
+.cyber-subtitle {
+    color: var(--cyber-blue);
+    font-size: 0.9rem;
     margin-bottom: 2rem;
-    color: #0b1c3f;
-    letter-spacing: -0.02em;
+    letter-spacing: 1px;
 }
 
 /* =========================================
-   4. 按钮样式
+   5. 赛博按钮
    ========================================= */
 .button-stack {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.2rem;
     width: 100%;
 }
 
-.button {
+.cyber-button {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     padding: 1rem;
     min-height: 3.5rem;
+    font-family: var(--font-title);
     font-weight: 700;
-    font-size: 1.05rem;
-    color: #fff;
+    font-size: 1.1rem;
+    text-transform: uppercase;
     text-decoration: none;
-    border-radius: 1rem;
-    border: 1px solid rgba(255,255,255,0.3);
-    
-    /* 默认渐变，具体颜色由下方修饰类定义 */
-    background: linear-gradient(120deg, var(--btn-color-1), var(--btn-color-2));
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2);
-    transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
-}
-
-.button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
-    filter: brightness(1.05);
-}
-
-.button:active {
-    transform: scale(0.98);
+    background: transparent;
+    color: var(--btn-color);
+    border: 2px solid var(--btn-color);
+    clip-path: polygon(0 0, 95% 0, 100% 25%, 100% 100%, 5% 100%, 0 75%);
+    transition: all 0.2s ease-in-out;
 }
 
 .icon {
-    width: 1.5rem;
-    height: 1.5rem;
-    margin-right: 0.75rem;
-    object-fit: contain;
+    width: 1.4rem;
+    height: 1.4rem;
+    margin-right: 0.8rem;
+    filter: drop-shadow(0 0 2px var(--btn-color));
 }
 
-/* 品牌特定颜色定义 */
-.button-blog     { --btn-color-1: #5a7bff; --btn-color-2: #7d5bff; }
-.button-xhs      { --btn-color-1: #ff2442; --btn-color-2: #ff5c7c; }
-/* B站粉色 */
-.button-bilibili { --btn-color-1: #FB7299; --btn-color-2: #ff8fb0; } 
-/* 微信绿色 */
-.button-wx       { --btn-color-1: #07c160; --btn-color-2: #28d07e; }
+.cyber-button:hover {
+    background: var(--btn-color);
+    color: var(--cyber-black);
+    box-shadow: 0 0 20px var(--btn-color);
+    transform: scale(1.02);
+}
+.cyber-button:hover .icon { filter: brightness(0); }
+
+.button-blog     { --btn-color: var(--cyber-yellow); }
+.button-xhs      { --btn-color: var(--cyber-pink); }
+.button-bilibili { --btn-color: #ff75d8; } 
+.button-wx       { --btn-color: #39ff14; }
 
 /* =========================================
-   5. 页脚样式
+   6. 页脚与合规信息 (Footer)
    ========================================= */
 .site-footer {
     width: 100%;
-    padding: 2rem 1rem 3rem;
+    padding: 2rem 1rem 4rem; /* 底部增加留白 */
     text-align: center;
-    font-size: 0.9rem;
-    color: var(--text-muted);
+    font-size: 0.8rem;
+    color: var(--cyber-text);
+    z-index: 20;
 }
 
-.stats {
+.cyber-stats {
     display: inline-flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 0.75rem 1.5rem;
-    background: rgba(255,255,255,0.2);
-    border-radius: 1rem;
-    border: 1px solid rgba(255,255,255,0.3);
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1rem;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid var(--cyber-blue);
     margin-bottom: 1.5rem;
+    box-shadow: 0 0 5px rgba(0, 240, 255, 0.2);
 }
 
-.stats strong { color: var(--accent-blue); }
+.stat-num { color: var(--cyber-yellow); font-weight: bold; }
+.separator { color: var(--cyber-pink); }
 
-.links {
+/* 备案和又拍云区域样式 */
+.cyber-links {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.8rem;
 }
 
-.links a {
-    color: inherit;
-    text-decoration: none;
+.beian, .provider {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    transition: opacity 0.2s;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: #888; /* 默认灰色 */
+    transition: color 0.3s;
 }
 
-.links a:hover { opacity: 0.7; }
+.beian img, .provider img {
+    height: 20px;
+    width: auto;
+    /* 修改点：完全移除发光和阴影 */
+    /* 使用灰度和亮度调整让其在黑底上呈现为浅灰色 */
+    filter: grayscale(100%) brightness(1.5) opacity(0.7);
+    transition: filter 0.3s, opacity 0.3s;
+}
 
-.links img { height: 20px; width: auto; }
+/* 悬停时：图标恢复原色，且不透明 */
+.beian:hover img, .provider a:hover img {
+    filter: grayscale(0%) opacity(1);
+}
+
+/* 文字悬停颜色 */
+.beian:hover, .provider a:hover {
+    color: var(--cyber-yellow);
+}
+
+.provider a {
+    display: inline-flex; 
+    align-items: center;
+}
+
+/* =========================================
+   7. 动画定义
+   ========================================= */
+@keyframes glitch-skew {
+    0% { transform: skew(2deg); }
+    10% { transform: skew(-3deg); }
+    20% { transform: skew(1deg); }
+    30% { transform: skew(-1deg); }
+    40% { transform: skew(4deg); }
+    50% { transform: skew(-2deg); }
+    60% { transform: skew(3deg); }
+    70% { transform: skew(-4deg); }
+    80% { transform: skew(2deg); }
+    90% { transform: skew(-1deg); }
+    100% { transform: skew(0deg); }
+}
+@keyframes glitch-anim {
+  0% { clip: rect(33px, 9999px, 10px, 0); }
+  50% { clip: rect(85px, 9999px, 66px, 0); }
+  100% { clip: rect(15px, 9999px, 92px, 0); }
+}
+@keyframes glitch-anim2 {
+  0% { clip: rect(65px, 9999px, 100px, 0); }
+  50% { clip: rect(12px, 9999px, 5px, 0); }
+  100% { clip: rect(95px, 9999px, 44px, 0); }
+}
