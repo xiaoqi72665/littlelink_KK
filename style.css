@@ -200,7 +200,8 @@ h1.cyber-glitch::after {
 }
 .cyber-button:hover .icon { filter: brightness(0); }
 
-.button-blog     { --btn-color: var(--cyber-yellow); }
+.button-personal-blog { --btn-color: var(--cyber-yellow); }
+.button-sims4     { --btn-color: #ff9500; }
 .button-xhs      { --btn-color: var(--cyber-pink); }
 .button-bilibili { --btn-color: #ff75d8; } 
 .button-news     { --btn-color: var(--cyber-blue); }
