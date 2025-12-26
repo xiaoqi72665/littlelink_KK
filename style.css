@@ -203,7 +203,7 @@ h1.cyber-glitch::after {
 .button-blog     { --btn-color: var(--cyber-yellow); }
 .button-xhs      { --btn-color: var(--cyber-pink); }
 .button-bilibili { --btn-color: #ff75d8; } 
-.button-wx       { --btn-color: #39ff14; }
+.button-news     { --btn-color: var(--cyber-blue); }
 
 /* =========================================
    6. 页脚与合规信息 (Footer)
