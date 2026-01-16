@@ -126,6 +126,10 @@ const playlistOpen = ref(false);
 
 const startDrag = (e: MouseEvent | TouchEvent) => {
     dragState.value.isDragging = true;
+    
+    // Prevent default to stop synthetic mouse events on touch devices
+    if ('touches' in e) e.preventDefault();
+
     let clientX = 0;
     let clientY = 0;
     
