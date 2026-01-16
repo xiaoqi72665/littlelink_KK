@@ -1,47 +1,57 @@
-# 不鹤 | NETRUNNER
+# KK_LINK (jisuk.top)
 
-一个赛博朋克风格的个人主页网站，展示个人信息与社交媒体链接。
+The personal landing page of 不鹤 (KK), combining modern web technologies with stunning visual effects.
 
-## ✨ 特点
+![Status](https://img.shields.io/badge/Status-Active-success)
+![Vue](https://img.shields.io/badge/Vue.js-3.5-4FC08D?logo=vuedotjs)
+![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite)
+![Tailwind](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?logo=tailwindcss)
 
-- **赛博朋克视觉风格**：采用霓虹色彩、故障动画、扫描线等经典赛博朋克元素
-- **响应式设计**：适配各种屏幕尺寸
-- **纯前端实现**：使用HTML、CSS、JavaScript原生开发，无框架依赖
-- **互动效果**：按钮悬停动画、文字故障效果等
-- **访问统计**：集成不蒜子统计功能
+## ✨ Features
 
-## 📁 项目结构
+- **🌌 Galaxy Background**: An interactive, WebGL-based 3D starfield background (powered by `ogl`).
+- **💫 Circular Text Avatar**: A dynamic, rotating text wrapper around the avatar (`motion-v`).
+- **🌠 Star Border Buttons**: Interactive buttons with a flowing "shooting star" border effect.
+- **📊 Live Stats Simulation**: Animated counters for "Visitors" and "Hits" that simulate real-time traffic and persist via `localStorage`.
+- **📱 Responsive Design**: Perfectly adapted for mobile devices, including notch/Dynamic Island optimization.
+- **⚡ Automated Deployment**: Integrated GitHub Actions workflow for automatic deployment to GitHub Pages.
 
+## 🛠️ Tech Stack
+
+- **Framework**: Vue 3 + TypeScript + Vite
+- **Styling**: Tailwind CSS
+- **Animations**: motion-v, vue-bits
+- **Icons**: Simple Icons (Brands), Lucide Vue Next (UI)
+- **Deployment**: GitHub Actions -> GitHub Pages
+
+## 🚀 Getting Started
+
+### Installation
+
+```bash
+npm install
 ```
-.
-├── index.html      # 主页面
-├── style.css       # 样式文件
-├── script.js       # 交互脚本
-├── images/         # 图片资源
-│   ├── avatar.png  # 头像
-│   ├── 备案.svg    # ICP备案图标
-│   └── icons/      # 按钮图标
-└── CNAME           # 域名配置
+
+### Development
+
+```bash
+npm run dev
 ```
 
-## 🎨 设计风格
+### Build
 
-- **配色方案**：电光黄(#fcee0a)、霓虹青(#00f0ff)、故障红(#ff003c)、深黑背景
-- **字体**：Rajdhani(标题)、Share Tech Mono(等宽)
-- **特效**：
-  - 文字故障动画(glitch)
-  - 扫描线效果(scanlines)
-  - 按钮悬停发光效果
-  - 卡片多边形裁剪
+```bash
+npm run build
+```
 
-## 🚀 使用方法
+## 🚢 Deployment
 
-1. 克隆或下载项目文件
-2. 修改`index.html`中的个人信息和链接
-3. 替换`images/avatar.png`为自己的头像
-4. 更新ICP备案信息
-5. 部署到静态网站托管服务(如GitHub Pages、Vercel、又拍云等)
+This project is configured to automatically deploy to GitHub Pages.
 
-## 📄 许可证
+1. Push your changes to the `main` branch.
+2. The [GitHub Action](.github/workflows/deploy.yml) will automatically build and deploy the `dist` folder to the `gh-pages` branch.
+3. Your custom domain `jisuk.top` (`CNAME` is in `public/`) will be preserved.
 
-MIT License
+## 📄 License
+
+MIT
