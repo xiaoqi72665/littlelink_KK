@@ -104,8 +104,21 @@ onMounted(() => {
 const storedVisitors = typeof localStorage !== 'undefined' ? localStorage.getItem('site_visitors') : null;
 const storedHits = typeof localStorage !== 'undefined' ? localStorage.getItem('site_hits') : null;
 
-const visitorCount = ref(storedVisitors ? Number(storedVisitors) : 54089768);
-const hitCount = ref(storedHits ? Number(storedHits) : 77669553);
+// Default start low if no storage, or use stored
+const visitorCount = ref(storedVisitors ? Number(storedVisitors) : 0);
+const hitCount = ref(storedHits ? Number(storedHits) : 0);
+
+// Dynamic places calculation to avoid leading zeros
+const getPlaces = (num: number) => {
+  if (num === 0) return [1];
+  const digits = Math.floor(Math.log10(num)) + 1;
+  const places = [];
+  for (let i = digits - 1; i >= 0; i--) {
+    places.push(Math.pow(10, i));
+  }
+  return places;
+};
+
 
 </script>
 
@@ -126,7 +139,7 @@ const hitCount = ref(storedHits ? Number(storedHits) : 77669553);
       <span class="text-xs text-white/40 font-bold uppercase tracking-wider">Visitors</span>
       <Counter
         :value="visitorCount"
-        :places="[10000000, 1000000, 100000, 10000, 1000, 100, 10, 1]"
+        :places="getPlaces(visitorCount)"
         :fontSize="14"
         :padding="0"
         :gap="2"
@@ -139,7 +152,7 @@ const hitCount = ref(storedHits ? Number(storedHits) : 77669553);
       <span class="text-xs text-white/40 font-bold uppercase tracking-wider">Hits</span>
       <Counter
         :value="hitCount"
-        :places="[10000000, 1000000, 100000, 10000, 1000, 100, 10, 1]"
+        :places="getPlaces(hitCount)"
         :fontSize="14"
         :padding="0"
         :gap="2"
