@@ -1,57 +1,76 @@
 # KK_LINK (jisuk.top)
 
-The personal landing page of 不鹤 (KK), combining modern web technologies with stunning visual effects.
+**不鹤** 的个人主页，结合了现代 Web 技术与极简美学的动态展示页。
 
 ![Status](https://img.shields.io/badge/Status-Active-success)
 ![Vue](https://img.shields.io/badge/Vue.js-3.5-4FC08D?logo=vuedotjs)
 ![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite)
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?logo=tailwindcss)
 
-## ✨ Features
+## ✨ 特性 (Features)
 
-- **🌌 Galaxy Background**: An interactive, WebGL-based 3D starfield background (powered by `ogl`).
-- **💫 Circular Text Avatar**: A dynamic, rotating text wrapper around the avatar (`motion-v`).
-- **🌠 Star Border Buttons**: Interactive buttons with a flowing "shooting star" border effect.
-- **📊 Live Stats Simulation**: Animated counters for "Visitors" and "Hits" that simulate real-time traffic and persist via `localStorage`.
-- **📱 Responsive Design**: Perfectly adapted for mobile devices, including notch/Dynamic Island optimization.
-- **⚡ Automated Deployment**: Integrated GitHub Actions workflow for automatic deployment to GitHub Pages.
+### 🎨 视觉体验
+- **🌌 星系背景**: 基于 `ogl` 实现的 WebGL 3D 沉浸式星空背景。
+- **💫 动态文字环**: 环绕头像旋转的文字，随音乐播放状态改变速度与内容。
+- **🌠 流星边框**: 按钮采用 "流星划过" 的动态边框效果 (`StarBorder`)。
+- **💎 玻璃拟态**: 整体 UI 采用现代玻璃拟态风格，精致通透。
 
-## 🛠️ Tech Stack
+### 🎵 沉浸式音乐播放器
+基于 Meting API 集成的网易云音乐播放器，深度定制的交互体验：
+- **🎧 全局播放**: 无缝集成的背景音乐播放。
+- **� 动态歌词**:
+  - 播放时，头像环绕文字显示 **歌名 & 歌手**。
+  - 副标题实时显示 **滚动歌词** (LRC)。
+  - 停止播放 2秒 后，平滑渐变为默认介绍文案。
+- **👋 手势交互 (Gesture Control)**:
+  - **拖动头像**:
+    - **⬅️ 左滑**: 上一首
+    - **➡️ 右滑**: 下一首
+    - **⬆️ 上滑**: 开/关 歌词显示 (Toggle)
+    - **⬇️ 下滑**: 打开播放列表
+  - **点击头像**: 播放/暂停
+- **📱 全端适配**: 手机与电脑端拥有统一且流畅的手势体验。
 
-- **Framework**: Vue 3 + TypeScript + Vite
-- **Styling**: Tailwind CSS
-- **Animations**: motion-v, vue-bits
-- **Icons**: Simple Icons (Brands), Lucide Vue Next (UI)
-- **Deployment**: GitHub Actions -> GitHub Pages
+### 📊 实时数据
+- **不书统计 (Busuanzi)**: 集成“不书”统计，实时显示 UV (访客数) 与 PV (点击量)。
 
-## 🚀 Getting Started
+## 🛠️ 技术栈 (Tech Stack)
 
-### Installation
+- **核心框架**: [Vue 3](https://vuejs.org/) + [TypeScript](https://www.typescriptlang.org/) + [Vite](https://vitejs.dev/)
+- **样式**: [Tailwind CSS](https://tailwindcss.com/)
+- **动画**: [Motion One (motion-v)](https://motion.dev/)
+- **图标**: [Simple Icons](https://simpleicons.org/) (品牌), [Lucide Vue](https://lucide.dev/) (UI)
+- **部署**: GitHub Actions -> GitHub Pages
+
+## 🚀 快速开始 (Getting Started)
+
+### 环境安装
 
 ```bash
 npm install
 ```
 
-### Development
+### 开发模式
 
 ```bash
 npm run dev
 ```
 
-### Build
+### 生产构建
 
 ```bash
 npm run build
 ```
 
-## 🚢 Deployment
+## 🚢 部署 (Deployment)
 
-This project is configured to automatically deploy to GitHub Pages.
+本项目配置了 GitHub Actions 自动部署流程：
 
-1. Push your changes to the `main` branch.
-2. The [GitHub Action](.github/workflows/deploy.yml) will automatically build and deploy the `dist` folder to the `gh-pages` branch.
-3. Your custom domain `jisuk.top` (`CNAME` is in `public/`) will be preserved.
+1. 推送代码到 `main` 分支。
+2. [GitHub Action](.github/workflows/deploy.yml) 自动构建 `dist` 目录。
+3. 自动将构建产物部署到 `gh-pages` 分支。
+4. 自定义域名 `jisuk.top` (`CNAME` 文件位于 `public/`) 会自动生效。
 
-## 📄 License
+## 📄 开源协议
 
-MIT
+MIT License @ [不鹤](https://github.com/xiaoqi72665)

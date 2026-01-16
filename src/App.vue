@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import Galaxy from './components/Galaxy.vue';
 import CircularText from './components/CircularText.vue';
 import StarBorder from './components/StarBorder.vue';
 import Counter from './components/Counter.vue';
-import { NotebookPen, Newspaper, Gamepad2 } from 'lucide-vue-next';
+import MusicPlaylist from './components/MusicPlaylist.vue';
+import { NotebookPen, Newspaper, Gamepad2, X } from 'lucide-vue-next';
 import { siAfdian, siXiaohongshu, siBilibili } from 'simple-icons';
 
 // Helper to get SVG path from Simple Icons
@@ -16,7 +17,297 @@ const mainLinks = [
   { label: 'Sims4 Mods', href: 'https://sims.jisuk.top/', iconComponent: Gamepad2 }
 ];
 
+// --- Music Player State ---
+const playlist = ref<any[]>([]);
+const currentSongIndex = ref(0);
+const isPlaying = ref(false);
+const audioRef = ref<HTMLAudioElement | null>(null);
+
+// New time tracking state
+const currentTime = ref(0);
+const duration = ref(0);
+
+// --- Dynamic Text & Lyrics State ---
+const lrcData = ref<{ time: number; text: string }[]>([]);
+const isMusicInfoVisible = ref(false);
+let revertTimer: any = null;
+
+// --- LRC Parsing & Logic ---
+const parseLrc = (lrc: string) => {
+  const lines = lrc.split('\n');
+  const result: { time: number; text: string }[] = [];
+  const timeReg = /\[(\d{2}):(\d{2})\.(\d{2,3})\]/;
+  
+  for (const line of lines) {
+    const match = timeReg.exec(line);
+    if (match) {
+      const min = parseInt(match[1]!);
+      const sec = parseInt(match[2]!);
+      const ms = parseInt(match[3]!.padEnd(3, '0'));
+      const time = min * 60 + sec + ms / 1000;
+      const text = line.replace(timeReg, '').trim();
+      if (text) { // Only add non-empty lines
+        result.push({ time, text });
+      }
+    }
+  }
+  return result;
+};
+
+const fetchLrc = async (url: string) => {
+    if (!url) {
+        lrcData.value = [];
+        return;
+    }
+    try {
+        const res = await fetch(url);
+        const text = await res.text();
+        lrcData.value = parseLrc(text);
+    } catch (e) {
+        console.warn('Failed to fetch lyrics');
+        lrcData.value = [];
+    }
+};
+
+// Computed Properties for UI
+const currentSong = computed(() => playlist.value[currentSongIndex.value]);
+
+const currentLyricText = computed(() => {
+    if (!lrcData.value.length) return '';
+    // Find the last lyric line that has passed
+    for (let i = lrcData.value.length - 1; i >= 0; i--) {
+        if (currentTime.value >= lrcData.value[i]!.time) {
+            return lrcData.value[i]!.text;
+        }
+    }
+    return '';
+});
+
+const circularTextString = computed(() => {
+    if (isMusicInfoVisible.value && currentSong.value) {
+        // Pad with asterisks for style
+        return `${currentSong.value?.name} * ${currentSong.value?.artist} * `; 
+    }
+    return "不鹤 * DEVELOPER * GAMER * ";
+});
+
+const subtitleString = computed(() => {
+    if (isMusicInfoVisible.value) {
+        return currentLyricText.value || (currentSong.value ? `${currentSong.value?.name} - ${currentSong.value?.artist}` : '');
+    }
+    return "VISUAL DESIGNER / DEVELOPER / GAMER";
+});
+
+// Watchers
+watch(isPlaying, (newVal) => {
+    if (newVal) {
+        if (revertTimer) clearTimeout(revertTimer);
+        isMusicInfoVisible.value = true;
+    } else {
+        // Delay revert by 2 seconds
+        revertTimer = setTimeout(() => {
+            isMusicInfoVisible.value = false;
+        }, 2000);
+    }
+});
+
+watch([currentSongIndex, playlist], () => {
+   if (playlist.value.length > 0 && currentSong.value?.lrc) {
+       fetchLrc(currentSong.value.lrc);
+   } else {
+       lrcData.value = [];
+   }
+});
+
+// --- Gesture & Drag State ---
+const dragState = ref({ x: 0, y: 0, isDragging: false, startX: 0, startY: 0 });
+const playlistOpen = ref(false);
+
+const startDrag = (e: MouseEvent | TouchEvent) => {
+    dragState.value.isDragging = true;
+    let clientX = 0;
+    let clientY = 0;
+    
+    if ('touches' in e && e.touches.length > 0) {
+        clientX = e.touches[0]!.clientX;
+        clientY = e.touches[0]!.clientY;
+    } else if ('clientX' in e) {
+        // Cast to MouseEvent to be safe, though not strictly required if we trust checks
+        const mouseEvent = e as MouseEvent;
+        clientX = mouseEvent.clientX;
+        clientY = mouseEvent.clientY;
+    }
+
+    dragState.value.startX = clientX - dragState.value.x;
+    dragState.value.startY = clientY - dragState.value.y;
+    
+    // Add global listeners
+    window.addEventListener('mousemove', onDrag);
+    window.addEventListener('mouseup', endDrag);
+    window.addEventListener('touchmove', onDrag, { passive: false });
+    window.addEventListener('touchend', endDrag);
+};
+
+const onDrag = (e: MouseEvent | TouchEvent) => {
+    if (!dragState.value.isDragging) return;
+    
+    let clientX = 0;
+    let clientY = 0;
+
+    if ('touches' in e && e.touches.length > 0) {
+        clientX = e.touches[0]!.clientX;
+        clientY = e.touches[0]!.clientY;
+    } else if ('clientX' in e) {
+        const mouseEvent = e as MouseEvent;
+        clientX = mouseEvent.clientX;
+        clientY = mouseEvent.clientY;
+    }
+    
+    // Calculate delta
+    let newX = clientX - dragState.value.startX;
+    let newY = clientY - dragState.value.startY;
+    
+    // Damping / Max Limit
+    const limit = 40; // Key Change: Reduced from 100 to 40
+    newX = Math.max(-limit, Math.min(limit, newX));
+    newY = Math.max(-limit, Math.min(limit, newY));
+
+    dragState.value.x = newX;
+    dragState.value.y = newY;
+    
+    // Prevent scrolling on mobile while dragging
+    if('touches' in e) e.preventDefault();
+};
+
+const endDrag = () => {
+    if (!dragState.value.isDragging) return;
+    dragState.value.isDragging = false;
+    
+    // Cleanup listeners
+    window.removeEventListener('mousemove', onDrag);
+    window.removeEventListener('mouseup', endDrag);
+    window.removeEventListener('touchmove', onDrag);
+    window.removeEventListener('touchend', endDrag);
+    
+    // Trigger Actions based on final position
+    const { x, y } = dragState.value;
+    const threshold = 20; // Reduced threshold to match lower limit
+    
+    if (x < -threshold) {
+        // Drag Left -> Prev
+        prevSong();
+    } else if (x > threshold) {
+        // Drag Right -> Next
+        nextSong();
+    } else if (y < -threshold) {
+        // Drag Up -> Toggle Info / Revert Text
+        // User Request: "头像往上拖是关，再拖一次是开"
+        isMusicInfoVisible.value = !isMusicInfoVisible.value;
+    } else if (y > threshold) {
+        // Drag Down -> Open Playlist
+        // User Request: "向下打开播放列表"
+        playlistOpen.value = true;
+    } else {
+        // Click (Small movement) -> Toggle Play
+        if (Math.abs(x) < 5 && Math.abs(y) < 5) {
+             togglePlay();
+        }
+    }
+    
+    // Spring back
+    dragState.value.x = 0;
+    dragState.value.y = 0;
+};
+
+
+const fetchPlaylist = async () => {
+  try {
+    const res = await fetch('https://meting.qjqq.cn/?server=netease&type=playlist&id=7641592364&timestamp=');
+    const data = await res.json();
+    playlist.value = data;
+    // Don't set src immediately to avoid pre-fetching issues or autoplay blocks
+  } catch (e) {
+    // console.warn('Failed to fetch playlist', e);
+  }
+};
+
+const handleAudioError = () => {
+  // Key Change: Completely silent based on user report
+  // console.warn("Audio playback error, attempting skip...");
+  
+  // Optional: Try next song if current one fails
+  if (playlist.value.length > 1 && isPlaying.value) {
+     setTimeout(() => nextSong(), 1000);
+  }
+};
+
+const togglePlay = async () => {
+  if (!audioRef.value || playlist.value.length === 0) return;
+  
+  if (isPlaying.value) {
+    audioRef.value.pause();
+    isPlaying.value = false;
+  } else {
+    try {
+        // Ensure src is set exactly when we want to play
+        if (!audioRef.value.src || audioRef.value.src === window.location.href || audioRef.value.src === '') {
+           audioRef.value.src = playlist.value[currentSongIndex.value].url;
+        }
+        
+        await audioRef.value.play();
+        isPlaying.value = true;
+    } catch (err) {
+        // console.error("Play failed:", err);
+        isPlaying.value = false;
+    }
+  }
+};
+
+const playSong = (index: number) => {
+  if (!audioRef.value) return;
+  currentSongIndex.value = index;
+  audioRef.value.src = playlist.value[index].url;
+  audioRef.value.play();
+  isPlaying.value = true;
+};
+
+const nextSong = () => {
+  let nextIndex = currentSongIndex.value + 1;
+  if (nextIndex >= playlist.value.length) nextIndex = 0;
+  playSong(nextIndex);
+};
+
+const prevSong = () => {
+  let prevIndex = currentSongIndex.value - 1;
+  if (prevIndex < 0) prevIndex = playlist.value.length - 1;
+  playSong(prevIndex);
+};
+
+const seek = (time: number) => {
+    if (audioRef.value) {
+        audioRef.value.currentTime = time;
+    }
+};
+
+const onTimeUpdate = () => {
+    if (audioRef.value) {
+        currentTime.value = audioRef.value.currentTime;
+    }
+};
+
+const onLoadedMetadata = () => {
+    if (audioRef.value) {
+        duration.value = audioRef.value.duration;
+    }
+};
+
+// Sync playing state with audio events (in case of external pause, end, etc)
+const onAudioPlay = () => { isPlaying.value = true; };
+const onAudioPause = () => { isPlaying.value = false; };
+
 onMounted(() => {
+  fetchPlaylist();
+  
   // --- Console Easter Egg (Simplified) ---
   console.log(
     "%c HELLO WORLD // KK_LINK %c V.3.0.0 ",
@@ -100,7 +391,6 @@ onMounted(() => {
 });
 
 // Initial stats (High baseline for cool effect)
-// Visitors: ~54M, Hits: ~77M
 const storedVisitors = typeof localStorage !== 'undefined' ? localStorage.getItem('site_visitors') : null;
 const storedHits = typeof localStorage !== 'undefined' ? localStorage.getItem('site_hits') : null;
 
@@ -118,14 +408,23 @@ const getPlaces = (num: number) => {
   }
   return places;
 };
-
-
 </script>
 
 <template>
   <div class="fixed inset-0 z-0 bg-black">
     <Galaxy />
   </div>
+  
+  <audio 
+    ref="audioRef" 
+    @ended="nextSong" 
+    @play="onAudioPlay" 
+    @pause="onAudioPause" 
+    @error="handleAudioError" 
+    @timeupdate="onTimeUpdate"
+    @loadedmetadata="onLoadedMetadata"
+    class="hidden"
+  ></audio>
 
   <!-- Hidden Busuanzi Spans (Source of Truth) -->
   <div style="display: none;">
@@ -167,33 +466,83 @@ const getPlaces = (num: number) => {
     
     <div class="w-full max-w-md text-center">
       
-      <!-- Avatar -->
-      <div class="relative w-40 h-40 mx-auto mb-8 pointer-events-auto flex items-center justify-center">
-        <!-- Circular Text Wrapper -->
-        <div class="absolute inset-0 z-0">
+      <!-- Avatar Section Wrapper - Static Position -->
+      <div class="relative w-40 h-40 mx-auto mb-8 pointer-events-auto flex items-center justify-center group outline-none select-none touch-none">
+        
+        <!-- Circular Text Wrapper - STATIC (Doesn't move with drag) -->
+        <div class="absolute inset-0 z-0 transition-opacity duration-500">
           <CircularText
-             text="不鹤 * DEVELOPER * GAMER * "
-             :spin-duration="20"
-             on-hover="slowDown"
+             :key="circularTextString"
+             :text="circularTextString"
+             :spin-duration="isPlaying ? 10 : 30"
+             :on-hover="isPlaying ? 'speedUp' : 'slowDown'"
              class-name="custom-class"
           />
         </div>
         
-        <!-- Inner Avatar Image -->
-        <div class="relative w-28 h-28 z-10">
-          <img class="w-full h-full object-cover rounded-full border-4 border-white/20 shadow-xl" 
+        <!-- Inner Avatar Image - DRAGGABLE (Moves with drag) -->
+        <div 
+           class="relative w-24 h-24 z-10 cursor-grab active:cursor-grabbing"
+           @mousedown="startDrag"
+           @touchstart="startDrag"
+           :style="{ transform: `translate3d(${dragState.x}px, ${dragState.y}px, 0)`, transition: dragState.isDragging ? 'none' : 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }"
+        >
+          <img class="w-full h-full object-cover rounded-full border-4 border-white/20 shadow-xl pointer-events-none" 
+               :class="{'animate-pulse-beat': isPlaying}"
                src="/images/avatar2.jpg" 
                alt="Avatar">
         </div>
+
       </div>
+      
+      <!-- Playlist (Detached from Avatar Flow) -->
+      <transition enter-active-class="transition ease-out duration-300" enter-from-class="opacity-0 translate-y-4" enter-to-class="opacity-100 translate-y-0" leave-active-class="transition ease-in duration-200" leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 translate-y-4">
+        <div 
+            v-if="playlistOpen"
+            class="fixed inset-0 z-50 flex items-center justify-center pointer-events-auto bg-black/50 backdrop-blur-sm"
+            @click.self="playlistOpen = false"
+        >
+             <!-- Desktop/Mobile Container -->
+             <div class="relative w-[90vw] max-w-sm md:w-auto">
+                 <!-- Close Button (Circular X) -->
+                 <button 
+                     class="absolute -top-12 right-0 md:-right-12 md:top-0 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white flex items-center justify-center transition-all backdrop-blur-md" 
+                     @click="playlistOpen = false"
+                 >
+                     <X class="w-5 h-5 text-white/80" />
+                 </button>
+                 
+                 <MusicPlaylist
+                    v-if="playlist.length > 0"
+                    :songs="playlist"
+                    :currentSongIndex="currentSongIndex"
+                    :isPlaying="isPlaying"
+                    :currentTime="currentTime"
+                    :duration="duration"
+                    @select="playSong"
+                    @next="nextSong"
+                    @prev="prevSong"
+                    @togglePlay="togglePlay"
+                    @seek="seek"
+                 />
+             </div>
+        </div>
+      </transition>
 
       <!-- Title -->
       <h1 class="text-4xl md:text-5xl font-extrabold mb-2 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70 pointer-events-auto">
         不鹤
       </h1>
-      <p class="text-white/60 text-sm md:text-base mb-10 font-medium tracking-wide">
-        VISUAL DESIGNER / DEVELOPER / GAMER
-      </p>
+      
+      <!-- Subtitle / Lyrics with Transition -->
+      <!-- Subtitle / Lyrics with Transition -->
+      <div class="min-h-[2rem] mb-10 pointer-events-auto flex items-center justify-center">
+        <Transition name="fade" mode="out-in">
+             <p :key="subtitleString" class="text-white/60 text-sm md:text-base font-medium tracking-wide text-center leading-snug max-w-xs md:max-w-md px-4">
+                {{ subtitleString }}
+             </p>
+        </Transition>
+      </div>
 
       <!-- Main Buttons (Simple & Elegant) -->
       <div class="mt-8 mb-8 space-y-4 pointer-events-auto">
@@ -265,4 +614,23 @@ const getPlaces = (num: number) => {
 
 <style>
 /* CSS in src/style.css */
+@keyframes pulse-beat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+.animate-pulse-beat {
+  animation: pulse-beat 1.5s infinite ease-in-out;
+}
+
+/* Fade Transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>
