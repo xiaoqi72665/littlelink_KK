@@ -210,7 +210,8 @@ const endDrag = () => {
         playlistOpen.value = true;
     } else {
         // Click (Small movement) -> Toggle Play
-        if (Math.abs(x) < 5 && Math.abs(y) < 5) {
+        // Increased threshold to 10px to better support mobile taps (which often have micro-movements)
+        if (Math.abs(x) < 10 && Math.abs(y) < 10) {
              togglePlay();
         }
     }
