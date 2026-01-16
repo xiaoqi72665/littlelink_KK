@@ -43,6 +43,42 @@ onMounted(() => {
   busuanziScript.src = "https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js";
   document.body.appendChild(busuanziScript);
 
+  // --- Real Busuanzi Data Sync ---
+  const syncBusuanziData = () => {
+    const uvSpan = document.getElementById('busuanzi_value_site_uv');
+    const pvSpan = document.getElementById('busuanzi_value_site_pv');
+    
+    if (!uvSpan || !pvSpan) return;
+
+    // Check every 500ms for data
+    const checkInterval = setInterval(() => {
+      const uvText = uvSpan.innerText.trim();
+      const pvText = pvSpan.innerText.trim();
+      
+      // Busuanzi usually returns empty or '...' initially
+      if (uvText && uvText !== '...' && !isNaN(Number(uvText))) {
+        // Found real data! Update baseline
+        const realVisitors = Number(uvText);
+        const realHits = Number(pvText);
+        
+        // Only update if differ significantly or logic dictates (here we take real as truth)
+        if (realVisitors > 0) visitorCount.value = realVisitors;
+        if (realHits > 0) hitCount.value = realHits;
+        
+        // We can clear interval after successful fetch, OR keep checking to sync periodically
+        // For "simulation" effect, we fetch once as baseline, then let simulation take over
+        clearInterval(checkInterval);
+        
+        // Update local storage with real baseline immediately
+        localStorage.setItem('site_visitors', visitorCount.value.toString());
+        localStorage.setItem('site_hits', hitCount.value.toString());
+      }
+    }, 500);
+  };
+  
+  // Wait a bit for DOM to be ready then start syncing
+  setTimeout(syncBusuanziData, 1000);
+
   // --- Simulated Live Stats (Counter) ---
   const simulateLiveStats = () => {
     // Random increment every 2-4 seconds
@@ -76,6 +112,12 @@ const hitCount = ref(storedHits ? Number(storedHits) : 77669553);
 <template>
   <div class="fixed inset-0 z-0 bg-black">
     <Galaxy />
+  </div>
+
+  <!-- Hidden Busuanzi Spans (Source of Truth) -->
+  <div style="display: none;">
+    <span id="busuanzi_value_site_uv"></span>
+    <span id="busuanzi_value_site_pv"></span>
   </div>
 
   <!-- Stats (Top Right) -->
