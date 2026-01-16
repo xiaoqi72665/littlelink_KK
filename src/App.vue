@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { onMounted, ref, computed, watch } from 'vue';
+import { onMounted, ref, computed, watch, defineAsyncComponent } from 'vue';
 import Galaxy from './components/Galaxy.vue';
 import CircularText from './components/CircularText.vue';
 import StarBorder from './components/StarBorder.vue';
 import Counter from './components/Counter.vue';
-import MusicPlaylist from './components/MusicPlaylist.vue';
 import { NotebookPen, Newspaper, Gamepad2, X } from 'lucide-vue-next';
 import { siAfdian, siXiaohongshu, siBilibili } from 'simple-icons';
+
+const MusicPlaylist = defineAsyncComponent(() => import('./components/MusicPlaylist.vue'));
 
 // Helper to get SVG path from Simple Icons
 const getSimpleIconPath = (icon: any) => icon.path;
